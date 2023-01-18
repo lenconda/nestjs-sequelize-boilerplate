@@ -26,6 +26,7 @@ import dbConfig from './config/db.config';
                     ...basicConfig,
                     synchronize: true,
                     autoLoadModels: true,
+                    logQueryParameters: true,
                 };
             },
             inject: [ConfigService],
