@@ -10,12 +10,14 @@ import {
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import dbConfig from './config/db.config';
+import appConfig from './config/app.config';
 
 @Module({
     imports: [
         ConfigModule.forRoot({
             load: [
                 dbConfig,
+                appConfig,
             ],
             isGlobal: true,
         }),
