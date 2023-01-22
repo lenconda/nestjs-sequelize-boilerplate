@@ -2,12 +2,12 @@ import { registerAs } from '@nestjs/config';
 
 export default registerAs('db', () => {
     const {
-        DB_TYPE: dialect,
-        DB_HOST: host,
-        DB_PORT: port,
-        DB_USERNAME: username,
-        DB_PASSWORD: password,
-        DB_NAME: database,
+        DB_TYPE: dialect = 'mysql',
+        DB_HOST: host = '0.0.0.0',
+        DB_PORT: port = '3306',
+        DB_USERNAME: username = 'root',
+        DB_PASSWORD: password = 'root',
+        DB_NAME: database = 'example',
     } = process.env ?? {};
 
     return {
