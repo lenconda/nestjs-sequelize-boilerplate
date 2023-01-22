@@ -2,6 +2,8 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as dotenv from 'dotenv';
 import * as path from 'path';
+import { ConfigService } from '@nestjs/config';
+import * as bodyParser from 'body-parser';
 
 const remixEnv = () => {
     if (typeof process.env.NODE_ENV !== 'string') {
@@ -20,6 +22,23 @@ const remixEnv = () => {
 async function bootstrap() {
     remixEnv();
     const app = await NestFactory.create(AppModule);
-    await app.listen(3000);
+    const configService = app.get<ConfigService>(ConfigService);
+
+    app.enableCors({
+        allowedHeaders: '*',
+        origin: '*',
+    });
+    app.use(bodyParser.json({ limit: '50mb' }));
+    app.use(bodyParser.urlencoded({
+        limit: '50mb',
+        extended: true,
+    }));
+    app.setGlobalPrefix('/api/v1');
+
+    await app.listen(
+        configService.get<number>('app.port'),
+        configService.get<string>('app.host'),
+    );
 }
+
 bootstrap();
