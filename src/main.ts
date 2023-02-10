@@ -4,6 +4,7 @@ import * as dotenv from 'dotenv';
 import * as path from 'path';
 import { ConfigService } from '@nestjs/config';
 import * as bodyParser from 'body-parser';
+import { VersioningType } from '@nestjs/common';
 
 const remixEnv = () => {
     if (typeof process.env.NODE_ENV !== 'string') {
@@ -21,6 +22,7 @@ const remixEnv = () => {
 
 async function bootstrap() {
     remixEnv();
+
     const app = await NestFactory.create(AppModule);
     const configService = app.get<ConfigService>(ConfigService);
 
@@ -33,7 +35,10 @@ async function bootstrap() {
         limit: '50mb',
         extended: true,
     }));
-    app.setGlobalPrefix('/api/v1');
+    app.enableVersioning({
+        type: VersioningType.URI,
+        defaultVersion: '1',
+    });
 
     await app.listen(
         configService.get<number>('app.port'),
