@@ -9,16 +9,14 @@ import {
 } from '@nestjs/sequelize';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import dbConfig from './config/db.config';
-import appConfig from './config/app.config';
+import { WinstonModule } from 'nest-winston';
+import * as winston from 'winston';
+import configs from './app.config';
 
 @Module({
     imports: [
         ConfigModule.forRoot({
-            load: [
-                dbConfig,
-                appConfig,
-            ],
+            load: configs,
             isGlobal: true,
         }),
         SequelizeModule.forRootAsync({
@@ -31,6 +29,27 @@ import appConfig from './config/app.config';
                     logQueryParameters: true,
                 };
             },
+            inject: [ConfigService],
+        }),
+        WinstonModule.forRootAsync({
+            useFactory: (configService: ConfigService) => {
+                return {
+                    transports: [
+                        new winston.transports.Console(),
+                        ...(
+                            process.env.NODE_ENV !== 'development'
+                                ? [
+                                    new winston.transports.File({
+                                        filename: configService.get<string>('app.logFile'),
+                                    }),
+                                ]
+                                : []
+                        ),
+                    ],
+                    exitOnError: false,
+                };
+            },
+            imports: [ConfigModule],
             inject: [ConfigService],
         }),
     ],

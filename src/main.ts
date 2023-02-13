@@ -5,6 +5,7 @@ import * as path from 'path';
 import { ConfigService } from '@nestjs/config';
 import * as bodyParser from 'body-parser';
 import { VersioningType } from '@nestjs/common';
+import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 
 const remixEnv = () => {
     if (typeof process.env.NODE_ENV !== 'string') {
@@ -39,6 +40,10 @@ async function bootstrap() {
         type: VersioningType.URI,
         defaultVersion: '1',
     });
+
+    if (process.env.NODE_ENV !== 'development') {
+        app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
+    }
 
     await app.listen(
         configService.get<number>('app.port'),
