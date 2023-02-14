@@ -1,25 +1,17 @@
-import { NestFactory } from '@nestjs/core';
+import {
+    NestFactory,
+    Reflector,
+} from '@nestjs/core';
 import { AppModule } from './app.module';
-import * as dotenv from 'dotenv';
-import * as path from 'path';
 import { ConfigService } from '@nestjs/config';
 import * as bodyParser from 'body-parser';
-import { VersioningType } from '@nestjs/common';
+import {
+    ClassSerializerInterceptor,
+    ValidationPipe,
+    VersioningType,
+} from '@nestjs/common';
 import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
-
-const remixEnv = () => {
-    if (typeof process.env.NODE_ENV !== 'string') {
-        return;
-    }
-
-    const modeSpecifiedEnv = dotenv.config({
-        path: path.join(process.cwd(), `.env.${process.env.NODE_ENV.toLowerCase()}`),
-    });
-
-    Object.assign(process.env, {
-        ...(modeSpecifiedEnv?.parsed || {}),
-    });
-};
+import { remixEnv } from './common';
 
 async function bootstrap() {
     remixEnv();
@@ -44,6 +36,9 @@ async function bootstrap() {
     if (process.env.NODE_ENV !== 'development') {
         app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
     }
+
+    app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
+    app.useGlobalPipes(new ValidationPipe({ transform: true }));
 
     await app.listen(
         configService.get<number>('app.port'),
