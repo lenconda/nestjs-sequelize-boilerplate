@@ -42,7 +42,12 @@ async function bootstrap() {
         } catch (e) {}
     }
 
-    app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
+    app.useGlobalInterceptors(new ClassSerializerInterceptor(
+        app.get(Reflector),
+        {
+            excludeExtraneousValues: true,
+        },
+    ));
     app.useGlobalPipes(new ValidationPipe({ transform: true }));
 
     await app.listen(
