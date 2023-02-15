@@ -9,7 +9,11 @@ import {
 } from '@nestjs/sequelize';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { WinstonModule } from 'nest-winston';
+import {
+    WinstonLogger,
+    WinstonModule,
+    WINSTON_MODULE_NEST_PROVIDER,
+} from 'nest-winston';
 import * as winston from 'winston';
 import configs from './app.config';
 
@@ -18,18 +22,6 @@ import configs from './app.config';
         ConfigModule.forRoot({
             load: configs,
             isGlobal: true,
-        }),
-        SequelizeModule.forRootAsync({
-            useFactory: async (configService: ConfigService) => {
-                const basicConfig = configService.get<SequelizeModuleOptions>('db');
-                return {
-                    ...basicConfig,
-                    synchronize: true,
-                    autoLoadModels: true,
-                    logQueryParameters: true,
-                };
-            },
-            inject: [ConfigService],
         }),
         WinstonModule.forRootAsync({
             useFactory: (configService: ConfigService) => {
@@ -51,6 +43,24 @@ import configs from './app.config';
             },
             imports: [ConfigModule],
             inject: [ConfigService],
+        }),
+        SequelizeModule.forRootAsync({
+            useFactory: async (configService: ConfigService, logger: WinstonLogger) => {
+                const basicConfig = configService.get<SequelizeModuleOptions>('db');
+                return {
+                    ...basicConfig,
+                    synchronize: true,
+                    autoLoadModels: true,
+                    logQueryParameters: true,
+                    logging(sql) {
+                        logger.log(sql, 'Sequelize');
+                    },
+                };
+            },
+            inject: [
+                ConfigService,
+                WINSTON_MODULE_NEST_PROVIDER,
+            ],
         }),
     ],
     controllers: [AppController],
