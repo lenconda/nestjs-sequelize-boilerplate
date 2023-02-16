@@ -45,7 +45,8 @@ async function bootstrap() {
     app.useGlobalInterceptors(new ClassSerializerInterceptor(
         app.get(Reflector),
         {
-            excludeExtraneousValues: true,
+            strategy: 'excludeAll',
+            enableImplicitConversion: true,
         },
     ));
     app.useGlobalPipes(new ValidationPipe({ transform: true }));
