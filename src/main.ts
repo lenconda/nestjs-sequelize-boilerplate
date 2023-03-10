@@ -7,19 +7,18 @@ import { ConfigService } from '@nestjs/config';
 import * as bodyParser from 'body-parser';
 import {
     ClassSerializerInterceptor,
-    ValidationPipe,
     VersioningType,
 } from '@nestjs/common';
 import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 import { remixEnv } from './common';
 import { killPortProcess } from 'kill-port-process';
+import { LanguageService } from './language/language.service';
 
 async function bootstrap() {
     remixEnv();
-
     const app = await NestFactory.create(AppModule);
     const configService = app.get<ConfigService>(ConfigService);
-    const port = configService.get<number>('app.port');
+    const languageService = app.get<LanguageService>(LanguageService);
 
     app.enableCors({
         allowedHeaders: '*',
@@ -31,17 +30,9 @@ async function bootstrap() {
         extended: true,
     }));
     app.enableVersioning({
-        type: VersioningType.URI,
         defaultVersion: '1',
+        type: VersioningType.URI,
     });
-    app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
-
-    if (process.env.NODE_ENV === 'development') {
-        try {
-            await killPortProcess(port);
-        } catch (e) {}
-    }
-
     app.useGlobalInterceptors(new ClassSerializerInterceptor(
         app.get(Reflector),
         {
@@ -49,7 +40,16 @@ async function bootstrap() {
             enableImplicitConversion: true,
         },
     ));
-    app.useGlobalPipes(new ValidationPipe({ transform: true }));
+
+    const port = configService.get<number>('app.port');
+
+    if (process.env.NODE_ENV === 'development') {
+        try {
+            await killPortProcess(port);
+        } catch (e) {}
+    }
+
+    app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
 
     await app.listen(
         port,
