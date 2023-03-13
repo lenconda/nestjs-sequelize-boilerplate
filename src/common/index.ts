@@ -1,5 +1,6 @@
-export { BaseDTO } from './base.dto';
-export { BaseModel } from './base.model';
-export { CurrentUser } from './current-user.decorator';
-export { remixEnv } from './remix-env';
+export * from './base.dto';
+export * from './base.model';
+export * from './current-user.decorator';
+export * from './remix-env';
 export * from './transform-dto.pipe';
+export * from './transform-array-dto.pipe';
