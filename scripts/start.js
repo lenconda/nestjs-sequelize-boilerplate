@@ -20,4 +20,5 @@ if (!startType) {
 
 spawn('node', ['./dist/main.js'], {
     cwd: path.resolve(__dirname, '..'),
+    stdio: 'inherit',
 });
