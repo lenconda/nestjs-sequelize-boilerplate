@@ -10,7 +10,6 @@
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "node ./scripts/start.js",
     "start:dev": "cross-env NODE_ENV=development nest start --watch",
-    "start:dev:init_lang": "cross-env NODE_ENV=development INIT_LANGUAGES_IN_DEVELOPEMNT_MODE=true nest start --watch",
     "start:pre": "cross-env NODE_ENV=pre node dist/main",
     "start:debug": "cross-env NODE_ENV=development nest start --debug --watch",
     "start:prod": "cross-env NODE_ENV=production node dist/main",
