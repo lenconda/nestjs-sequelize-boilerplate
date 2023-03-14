@@ -21,7 +21,7 @@ function createTransformArrayDTOPipe<T>(itemType: Type<T>): Type<PipeTransform> 
 
         public transform(values: T[], metadata: ArgumentMetadata): Promise<any[]> {
             if (!Array.isArray(values)) {
-                return [];
+                return Promise.resolve([] as T[]);
             }
             return Promise.all(values.map((value) => super.transform(
                 value,
