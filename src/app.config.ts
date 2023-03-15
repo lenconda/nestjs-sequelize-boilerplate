@@ -1,4 +1,6 @@
 import { registerAs } from '@nestjs/config';
+import { ClassTransformOptions } from 'class-transformer';
+import { ValidatorOptions as ClassValidatorOptions } from 'class-validator';
 
 export default [
     registerAs('app', () => {
@@ -30,5 +32,16 @@ export default [
             password,
             database,
         };
+    }),
+    registerAs('classTransformer', () => {
+        return {
+            excludeExtraneousValues: true,
+            enableImplicitConversion: true,
+        } as ClassTransformOptions;
+    }),
+    registerAs('classValidator', () => {
+        return {
+            forbidUnknownValues: false,
+        } as ClassValidatorOptions;
     }),
 ];

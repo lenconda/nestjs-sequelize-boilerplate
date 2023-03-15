@@ -12,13 +12,12 @@ import {
 import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 import { remixEnv } from './common';
 import { killPortProcess } from 'kill-port-process';
-import { LanguageService } from './language/language.service';
+import { ClassTransformOptions } from 'class-transformer';
 
 async function bootstrap() {
     remixEnv();
     const app = await NestFactory.create(AppModule);
     const configService = app.get<ConfigService>(ConfigService);
-    const languageService = app.get<LanguageService>(LanguageService);
 
     app.enableCors({
         allowedHeaders: '*',
@@ -35,10 +34,7 @@ async function bootstrap() {
     });
     app.useGlobalInterceptors(new ClassSerializerInterceptor(
         app.get(Reflector),
-        {
-            excludeExtraneousValues: true,
-            enableImplicitConversion: true,
-        },
+        configService.get<ClassTransformOptions>('classTransformer'),
     ));
 
     const port = configService.get<number>('app.port');
