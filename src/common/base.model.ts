@@ -5,7 +5,7 @@ import {
     UpdatedAt,
 } from 'sequelize-typescript';
 
-export class BaseModel extends Model {
+export class BaseModel<T = any> extends Model<T> {
     @CreatedAt
     @Column({ field: 'created_at' })
     public createdAt: Date;

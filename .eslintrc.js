@@ -10,6 +10,9 @@ module.exports = {
         node: true,
         jest: true,
     },
+    globals: {
+        NodeJS: true,
+    },
     rules: {
         'react/react-in-jsx-scope': 'off',
         semi: ['error', 'always'],
@@ -27,7 +30,7 @@ module.exports = {
         'max-nested-callbacks': 'off',
         'max-params': 'off',
         'prefer-regex-literals': 'off',
-        'no-unused-vars': 'error',
+        'no-unused-vars': 'off',
         'no-useless-call': 'off',
         'complexity': 'off',
         'no-new-func': 'off',
@@ -59,6 +62,7 @@ module.exports = {
         '@typescript-eslint/space-infix-ops': ['error', {
             'int32Hint': true,
         }],
+        '@typescript-eslint/no-unused-vars': 'error',
         '@typescript-eslint/interface-name-prefix': 'off',
         '@typescript-eslint/explicit-function-return-type': 'off',
         '@typescript-eslint/explicit-module-boundary-types': 'off',

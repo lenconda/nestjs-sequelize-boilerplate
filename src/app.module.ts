@@ -1,4 +1,8 @@
-import { Module } from '@nestjs/common';
+import {
+    MiddlewareConsumer,
+    Module,
+    Scope,
+} from '@nestjs/common';
 import {
     ConfigModule,
     ConfigService,
@@ -16,6 +20,10 @@ import {
 } from 'nest-winston';
 import * as winston from 'winston';
 import configs from './app.config';
+import { LoggerService } from './logger/logger.service';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { AppInterceptor } from './app.interceptor';
+import { AppMiddleware } from './app.middleware';
 
 @Module({
     imports: [
@@ -32,6 +40,7 @@ import configs from './app.config';
                             process.env.NODE_ENV !== 'development'
                                 ? [
                                     new winston.transports.File({
+                                        level: 'info',
                                         filename: configService.get<string>('app.logFile'),
                                     }),
                                 ]
@@ -39,6 +48,12 @@ import configs from './app.config';
                         ),
                     ],
                     exitOnError: false,
+                    format: winston.format.combine(
+                        winston.format.timestamp({
+                            format: 'YYYY-MM-DD HH:mm:ss',
+                        }),
+                        winston.format.printf((info) => `${info.timestamp} - ${info.level}: [${info.context}] ${info.message}` + (info.splat !== undefined ? `${info.splat}` : ' ')),
+                    ),
                 };
             },
             imports: [ConfigModule],
@@ -64,6 +79,18 @@ import configs from './app.config';
         }),
     ],
     controllers: [AppController],
-    providers: [AppService],
+    providers: [
+        AppService,
+        LoggerService,
+        {
+            provide: APP_INTERCEPTOR,
+            scope: Scope.REQUEST,
+            useClass: AppInterceptor,
+        },
+    ],
 })
-export class AppModule {}
+export class AppModule {
+    public configure(consumer: MiddlewareConsumer) {
+        consumer.apply(AppMiddleware).forRoutes('*');
+    }
+}
