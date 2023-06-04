@@ -7,5 +7,4 @@ export * from './transform-array-dto.pipe';
 export * from './api-controller.decorator';
 export * from './open-api-controller.decorator';
 export * from './permanently-parse-int.pipe';
-export * from './listener.service';
 export * from './parse-date.pipe';

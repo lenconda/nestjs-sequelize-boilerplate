@@ -1,20 +1,23 @@
 import {
     Inject,
     Injectable,
-    Scope,
 } from '@nestjs/common';
-import { REQUEST } from '@nestjs/core';
 import { Request } from 'express';
 import {
     WINSTON_MODULE_NEST_PROVIDER,
     WinstonLogger,
 } from 'nest-winston';
+import {
+    NJRS_REQUEST,
+    RequestScope,
+} from 'nj-request-scope';
 import { ConstantService } from 'src/constant/constant.service';
 
-@Injectable({ scope: Scope.REQUEST })
+@Injectable()
+@RequestScope()
 export class LoggerService {
     public constructor(
-        @Inject(REQUEST)
+        @Inject(NJRS_REQUEST)
         private readonly request: Request,
         @Inject(WINSTON_MODULE_NEST_PROVIDER)
         private readonly logger: WinstonLogger,

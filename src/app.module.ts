@@ -24,6 +24,12 @@ import { LoggerService } from './logger/logger.service';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { AppInterceptor } from './app.interceptor';
 import { AppMiddleware } from './app.middleware';
+import { RequestScopeModule } from 'nj-request-scope';
+import { UtilModule } from './util/util.module';
+import { LoggerModule } from './logger/logger.module';
+import { ExceptionModule } from './exception/exception.module';
+import { ConstantModule } from './constant/constant.module';
+import { CheckerModule } from './checker/checker.module';
 
 @Module({
     imports: [
@@ -77,6 +83,12 @@ import { AppMiddleware } from './app.middleware';
                 WINSTON_MODULE_NEST_PROVIDER,
             ],
         }),
+        RequestScopeModule,
+        UtilModule,
+        LoggerModule,
+        ExceptionModule,
+        ConstantModule,
+        CheckerModule,
     ],
     controllers: [AppController],
     providers: [
