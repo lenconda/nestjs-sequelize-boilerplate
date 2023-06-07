@@ -26,6 +26,7 @@ import {
     ClassConstructor,
     ClassTransformOptions,
     plainToInstance,
+    instanceToPlain,
 } from 'class-transformer';
 import { CheckerService } from 'src/checker/checker.service';
 
@@ -379,6 +380,13 @@ export class UtilService {
 
     public plainToInstance<T, V>(cls: ClassConstructor<T>, plain: V, options: ClassTransformOptions = {}): T {
         return plainToInstance<T, V>(cls, plain, {
+            ...this.configService.get('classTransformer'),
+            ...options,
+        });
+    }
+
+    public instanceToPlain<T = unknown>(object: T, options?: ClassTransformOptions) {
+        return instanceToPlain(object, {
             ...this.configService.get('classTransformer'),
             ...options,
         });
